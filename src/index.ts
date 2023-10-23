@@ -1,29 +1,26 @@
-"use strict";
-
-const fs = require("fs");
-const mongoDB = require("mongodb");
-
+import fs from "fs";
+import mongoDB, { MongoClient } from "mongodb";
 
 /**
- * connects to mongodb client and re-uses same connection application wide to benefit from connection pool
+ * connects to mongodb client and re-uses same connection application wide 
+ * to benefit from connection pool
  */
 class Client {
-    constructor() {
+    private _client: MongoClient | null; 
+
+    public writeErrLogsToFIle: boolean;
+
+    constructor(private _dbName: string = "", private _url: string  ="") {
 
         //copy all props of mongodb 
         Object.assign(this, mongoDB);
 
-        /** @private */
         this._client = null;
 
-        /** @private */
         this._connect = this._connect.bind(this);
 
-        /** @private */
-        this._url;
+        this._url = '';
 
-        /** @private */
-        this._dbName;
 
         this.writeErrLogsToFIle = true;
         this.getDB = this.getDB.bind(this);
@@ -40,14 +37,14 @@ class Client {
      * get database name
      * @return {string} database name
      */
-    get dbName() {
+    get dbName(): string {
         return this._dbName;
     }
 
     /**
      * set mongo connection url
      */
-    set url(urlStr) {
+    set url(urlStr: string) {
         this._url = urlStr;
 
         //reset client to null; so that the next connect attempt creates new connection to new url
@@ -58,7 +55,7 @@ class Client {
      * get mongo connection url
      * @return {string} mongo connection url
      */
-    get url() {
+    get url(): string {
         return this._url
     }
 
@@ -67,16 +64,16 @@ class Client {
      * @private {function}
      * @return {}
      */
-    async _connect() {
+    private async _connect(): Promise<mongoDB.MongoClient> {
 
         if (!this._client) {
             if (!this._url) throw new Error("mongo server url is not set. Set url first");
             try {
 
-                this._client = await mongoDB.MongoClient.connect(this._url, { useNewUrlParser: true, useUnifiedTopology: true });
-                return this._client; //as of mongodb 4.0.13 MongoClient.connect return client object
+                this._client = await MongoClient.connect(this._url);
+                return this._client; //as of mongodb 6.2.0 MongoClient.connect return client object
 
-            } catch (err) {
+            } catch (err: any) {
 
                 if (this.writeErrLogsToFIle) {
                     let line = "-".repeat(20);
@@ -87,7 +84,7 @@ class Client {
                         if (fileWriteError) console.log(fileWriteError) // :| what else to do ? lol :p
                     });
                 }
-                else throw err;
+                throw err;
             }
         }
 
@@ -98,7 +95,7 @@ class Client {
      * get mongodb connection client
      * 
      */
-    async getClient() {
+    async getClient(): Promise<mongoDB.MongoClient> {
 
         //return client if already connected
         if (this._client) return this._client;
@@ -112,13 +109,15 @@ class Client {
      * @param {string} dbName 
      * @returns 
      */
-    async getDB(dbName = this._dbName) {
+    async getDB(dbName = this._dbName): Promise<mongoDB.Db> {
 
         if (!dbName && !this._dbName) {
             throw new Error("either pass dbName as first argument or set default dbName")
         }
+        
+        let db = (await this.getClient())?.db(dbName);
+        // if(!db) throw new Error("DB uninitialized");
 
-        let db = (await this.getClient()).db(dbName);
         return db;
     }
 
@@ -141,5 +140,5 @@ class Client {
     }
 }
 
-module.exports = new Client();
-module.exports.Client = Client;
+export default new Client();
+export {Client};
