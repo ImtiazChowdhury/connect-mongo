@@ -6,11 +6,11 @@ import mongoDB, { MongoClient } from "mongodb";
  * to benefit from connection pool
  */
 class Client {
-    private _client: MongoClient | null; 
+    private _client: MongoClient | null;
 
     public writeErrLogsToFIle: boolean;
 
-    constructor(private _dbName: string = "", private _url: string  ="") {
+    constructor(private _dbName: string = "", private _url: string = "") {
 
         //copy all props of mongodb 
         Object.assign(this, mongoDB);
@@ -79,8 +79,8 @@ class Client {
                     let line = "-".repeat(20);
                     let errorHead = `${Date.now().toLocaleString()}`
                     let error = `\n${line}\n${line}\n${errorHead}\n${line}\n${err.message}\n${line}\n${line}\n\n`
-                    
-                    fs.appendFile("./mongoError.log", error, (fileWriteError) => {
+
+                    fs.appendFile("./mongoError.log", error, (fileWriteError: NodeJS.ErrnoException | null) => {
                         if (fileWriteError) console.log(fileWriteError) // :| what else to do ? lol :p
                     });
                 }
@@ -114,7 +114,7 @@ class Client {
         if (!dbName && !this._dbName) {
             throw new Error("either pass dbName as first argument or set default dbName")
         }
-        
+
         let db = (await this.getClient())?.db(dbName);
         // if(!db) throw new Error("DB uninitialized");
 
@@ -136,9 +136,9 @@ class Client {
         } else {
             console.info("Client is already closed");
         }
-        return 
+        return
     }
 }
 
 export default new Client();
-export {Client};
+export { Client };
