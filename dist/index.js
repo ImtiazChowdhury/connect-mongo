@@ -35,9 +35,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Client = void 0;
+exports.mongoDB = exports.Client = void 0;
 const fs_1 = __importDefault(require("fs"));
 const mongodb_1 = __importStar(require("mongodb"));
+exports.mongoDB = mongodb_1.default;
 /**
  * connects to mongodb client and re-uses same connection application wide
  * to benefit from connection pool

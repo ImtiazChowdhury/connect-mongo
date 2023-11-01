@@ -56,4 +56,4 @@ declare class Client {
 }
 declare const _default: Client;
 export default _default;
-export { Client };
+export { Client, mongoDB };

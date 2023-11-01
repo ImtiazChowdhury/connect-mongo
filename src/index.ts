@@ -141,4 +141,4 @@ class Client {
 }
 
 export default new Client();
-export { Client };
+export { Client, mongoDB };
