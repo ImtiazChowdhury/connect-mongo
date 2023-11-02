@@ -54,7 +54,6 @@ class Client {
         this._url = '';
         this.writeErrLogsToFIle = true;
         this.getDB = this.getDB.bind(this);
-        console.log({ t: this, mongoDB });
     }
     /**
      * set database name

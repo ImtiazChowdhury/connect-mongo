@@ -25,7 +25,6 @@ class Client {
         this.writeErrLogsToFIle = true;
         this.getDB = this.getDB.bind(this);
 
-        console.log({t: this, mongoDB})
     }
 
     /**
