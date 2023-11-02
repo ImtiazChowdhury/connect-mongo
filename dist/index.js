@@ -37,8 +37,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.mongoDB = exports.Client = void 0;
 const fs_1 = __importDefault(require("fs"));
-const mongodb_1 = __importStar(require("mongodb"));
-exports.mongoDB = mongodb_1.default;
+const mongoDB = __importStar(require("mongodb"));
+exports.mongoDB = mongoDB;
 /**
  * connects to mongodb client and re-uses same connection application wide
  * to benefit from connection pool
@@ -48,12 +48,13 @@ class Client {
         this._dbName = _dbName;
         this._url = _url;
         //copy all props of mongodb 
-        Object.assign(this, mongodb_1.default);
+        Object.assign(this, mongoDB);
         this._client = null;
         this._connect = this._connect.bind(this);
         this._url = '';
         this.writeErrLogsToFIle = true;
         this.getDB = this.getDB.bind(this);
+        console.log({ t: this, mongoDB });
     }
     /**
      * set database name
@@ -94,7 +95,7 @@ class Client {
                 if (!this._url)
                     throw new Error("mongo server url is not set. Set url first");
                 try {
-                    this._client = yield mongodb_1.MongoClient.connect(this._url);
+                    this._client = yield mongoDB.MongoClient.connect(this._url);
                     return this._client; //as of mongodb 6.2.0 MongoClient.connect return client object
                 }
                 catch (err) {
@@ -164,4 +165,5 @@ class Client {
     }
 }
 exports.Client = Client;
+console.log({ mongoDBFromModule: mongoDB });
 exports.default = new Client();

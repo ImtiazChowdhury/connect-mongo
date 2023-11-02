@@ -1,12 +1,12 @@
 import fs from "fs";
-import mongoDB, { MongoClient } from "mongodb";
+import * as mongoDB from "mongodb";
 
 /**
  * connects to mongodb client and re-uses same connection application wide 
  * to benefit from connection pool
  */
 class Client {
-    private _client: MongoClient | null;
+    private _client: mongoDB.MongoClient | null;
 
     public writeErrLogsToFIle: boolean;
 
@@ -24,6 +24,8 @@ class Client {
 
         this.writeErrLogsToFIle = true;
         this.getDB = this.getDB.bind(this);
+
+        console.log({t: this, mongoDB})
     }
 
     /**
@@ -70,7 +72,7 @@ class Client {
             if (!this._url) throw new Error("mongo server url is not set. Set url first");
             try {
 
-                this._client = await MongoClient.connect(this._url);
+                this._client = await mongoDB.MongoClient.connect(this._url);
                 return this._client; //as of mongodb 6.2.0 MongoClient.connect return client object
 
             } catch (err: any) {

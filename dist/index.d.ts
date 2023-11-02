@@ -1,4 +1,4 @@
-import mongoDB from "mongodb";
+import * as mongoDB from "mongodb";
 /**
  * connects to mongodb client and re-uses same connection application wide
  * to benefit from connection pool
