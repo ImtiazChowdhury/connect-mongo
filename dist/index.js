@@ -165,5 +165,4 @@ class Client {
     }
 }
 exports.Client = Client;
-console.log({ mongoDBFromModule: mongoDB });
 exports.default = new Client();
